@@ -6,22 +6,21 @@ from keras.utils import to_categorical
 import ipalhabet
 from ipalhabet import ALPHABET
 
-alphabet = ALPHABET
+LENGTH = 75
 
 def FeatureOptimize( phrase ):
-    #Convert to IPA
-    phrase = ipa.convert(phrase)
-
     #Cut Phrase to a length of 100
-    phrase = phrase[0:100]
-
+    phrase = phrase[0:LENGTH].lower()
+    phrase = phrase.zfill(LENGTH)
     #convert to ascii values, then change to numpy array
     num_phrase = []
     for char in phrase:
-        char = ord(char)
+        char = ord(char) - 96
+        if(char < 0):
+            char = 1
         num_phrase.append(char)
     num_phrase = np.array(num_phrase)
-    num_phrase = to_categorical(num_phrase)
+    num_phrase = to_categorical(num_phrase, 27)
 
     #num_phrase = (np.arange(107) == num_phrase[...,None]).astype(int)
     #Zero Fill from the front
@@ -49,8 +48,9 @@ def OneHotEncode( numerated_phrase ): #do differently
 	    onehot_encoded.append(letter)
     
 
-phrase = "I make elevating music you make elevator music"
+phrase = "i make elavting music you make elevator music"
 print(phrase)
 print("Feature Optimize . . .")
 phrase = FeatureOptimize(phrase)
-OneHotEncode(phrase)
+print(str(len(phrase)) + " by " + str(len(phrase[0])))
+print(phrase)
